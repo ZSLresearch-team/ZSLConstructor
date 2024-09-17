@@ -1,6 +1,13 @@
-#!/usr/bin/env python3
+"""
+Configuration file for the entire project. Contains all the configurations with
+comprehensive documentation and provide sensible defaults for all options.
 
-"""Configs."""
+This file is the one-stop reference point for all configurable options.
+Next, you'll create YAML configuration files; typically you'll make one for each
+experiment. Each configuration file only overrides the options that are changing
+in that experiment. This allows to maintain experiments reproducibility in a
+clear way.
+"""
 from fvcore.common.config import CfgNode
 
 # -----------------------------------------------------------------------------
@@ -45,7 +52,7 @@ _C.CADA_VAE.HIDDEN_SIZE.ENCODER = CfgNode()
 _C.CADA_VAE.HIDDEN_SIZE.ENCODER.IMG = [1560]
 
 # Class attributes hidden size
-_C.CADA_VAE.HIDDEN_SIZE.ENCODER.CLS_ATTR = [1450]
+_C.CADA_VAE.HIDDEN_SIZE.ENCODER.CLSATTR = [1450]
 
 # Decoders hidden sizes
 _C.CADA_VAE.HIDDEN_SIZE.DECODER = CfgNode()
@@ -54,7 +61,7 @@ _C.CADA_VAE.HIDDEN_SIZE.DECODER = CfgNode()
 _C.CADA_VAE.HIDDEN_SIZE.DECODER.IMG = [1660]
 
 # Class attributes hidden size
-_C.CADA_VAE.HIDDEN_SIZE.DECODER.CLS_ATTR = [665]
+_C.CADA_VAE.HIDDEN_SIZE.DECODER.CLSATTR = [665]
 
 
 # ---------------------------------------------------------------------------- #
@@ -108,7 +115,7 @@ _C.ZSL = CfgNode()
 _C.ZSL.EPOCH = 100
 
 # Training mini-batch size
-_C.ZSL.BATCH_SIZE = 128
+_C.ZSL.BATCH_SIZE = 50
 
 # Whether to save embediings or not
 _C.ZSL.SAVE_EMB = False
@@ -123,7 +130,7 @@ _C.ZSL.SAMPLES_PER_CLASS = CfgNode()
 _C.ZSL.SAMPLES_PER_CLASS.IMG = 200
 
 # Samples per class for class attribut modality
-_C.ZSL.SAMPLES_PER_CLASS.CLS_ATTR = 400
+_C.ZSL.SAMPLES_PER_CLASS.CLSATTR = 400
 
 
 # ---------------------------------------------------------------------------- #
@@ -171,7 +178,7 @@ _C.CLS = CfgNode()
 _C.CLS.EPOCH = 100
 
 # Training mini-batch size
-_C.CLS.BATCH_SIZE = 128
+_C.CLS.BATCH_SIZE = 32
 
 # Load emveddings data from file
 _C.CLS.LOAD_DATA = False
@@ -237,7 +244,8 @@ _C.DATA.FEAT_EMB = CfgNode()
 
 
 # Path to feature embeddings
-_C.DATA.FEAT_EMB.PATH = "data/CUB/resnet101/"
+_C.DATA.FEAT_EMB.PATH = "datasets/CUB_resnet101/"
+# _C.DATA.FEAT_EMB.PATH = "datasets/CMUMovies_bert-large-cased/"
 
 
 _C.DATA.FEAT_EMB.DIM = CfgNode()
@@ -246,7 +254,7 @@ _C.DATA.FEAT_EMB.DIM = CfgNode()
 _C.DATA.FEAT_EMB.DIM.IMG = 2048
 
 
-_C.DATA.FEAT_EMB.DIM.CLS_ATTR = 312
+_C.DATA.FEAT_EMB.DIM.CLSATTR = 312
 
 
 # ---------------------------------------------------------------------------- #
@@ -306,21 +314,8 @@ _C.DATA_LOADER.PIN_MEMORY = True
 _C.DATA_LOADER.DROP_LAST = True
 
 
-def _assert_and_infer_cfg(cfg):
-    # CADA-VAE assertions
-    assert cfg.CADA_VAE.NORM_TYPE in ["l1", "l2"]
-
-    # ZSL model assertions
-    assert cfg.ZSL.SOLVER.OPTIMIZING_METHOD in ["adam", "sgd"]
-
-    # Final classifier assertions
-    assert cfg.CLS.SOLVER.OPTIMIZING_METHOD in ["adam", "sgd"]
-
-    return cfg
-
-
-def get_cfg():
+def get_cfg_defaults() -> CfgNode:
     """
-    Get a copy of the default config.
+    Get a YACS CfgNode object with default values for the project.
     """
-    return _assert_and_infer_cfg(_C.clone())
+    return _C.clone()
